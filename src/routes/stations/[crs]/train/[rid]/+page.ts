@@ -1,11 +1,15 @@
 export type HuxleyServiceDetails = {
-	operator: string;
 	trainid: string;
-	sdd: string;
 	uid: string;
-	locations: HuxleyServiceLocation[];
+	sdd: string;
+
+	operator: string;
+	operatorCode: string;
+
 	delayReason: { tiploc: string; near: boolean; value: number };
 	cancelReason: { tiploc: string; near: boolean; value: number };
+
+	locations: HuxleyServiceLocation[];
 };
 
 export type HuxleyServiceLocation = {

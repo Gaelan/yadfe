@@ -3,10 +3,13 @@
 	import type { HuxleyService } from './+layout.js';
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { dev } from '$app/environment';
 
 	export let data;
 
-	// $: console.log(data);
+	$: if (dev) {
+		console.log(data.trains);
+	}
 
 	let interval: number | null = null;
 
@@ -56,6 +59,23 @@
 			minute: '2-digit'
 		});
 	}
+
+	let services: (HuxleyService & { type: string })[] = [];
+	$: services = (data.trains.trainServices || [])
+		.map((x) => ({ ...x, type: 'train' }))
+		.concat((data.trains.busServices || []).map((x) => ({ ...x, type: 'bus' })))
+		.concat((data.trains.ferryServices || []).map((x) => ({ ...x, type: 'ferry' })))
+		.sort((a, b) => {
+			let aTime = a.staSpecified ? a.sta : a.std;
+			let bTime = b.staSpecified ? b.sta : b.std;
+			if (aTime < bTime) {
+				return -1;
+			} else if (aTime > bTime) {
+				return 1;
+			} else {
+				return 0;
+			}
+		});
 </script>
 
 <div class="root">
@@ -63,6 +83,47 @@
 		<div class="board-main">
 			<a class="back" href="/">← Change station</a>
 			<h1>{data.trains.locationName}</h1>
+
+			{#if data.trains.stationManagerCode == 'SJ'}
+				<div class="message info">
+					This website uses National Rail data, which includes only the Tram Train. Trams on other
+					lines are not shown.
+				</div>
+			{/if}
+			{#if data.trains.stationManagerCode == 'ES' && data.trains.crs != 'LIU'}
+				<div class="message info">
+					This website uses UK National Rail data, which includes only Eurostar services to and from
+					London. Domestic services, and non-UK international services, are not shown.
+
+					{#if data.trains.crs == 'PBN'}
+						For other trains, see <a
+							href="https://www.sncf.com/en/stations/paris-nord/OCE87271007/departures-arrivals/gl/departures"
+						>
+							SNCF</a
+						>.
+					{/if}
+					{#if data.trains.crs == 'BXS'}
+						For other trains, see <a
+							href="https://www.belgiantrain.be/en/travel-info/current/search-by-station"
+						>
+							SNCB</a
+						>.
+					{/if}
+					{#if data.trains.crs == 'AMS'}
+						For other trains, see <a
+							href="https://en.treinposities.nl/vertrektijden/amsterdam-centraal"
+						>
+							treinposities</a
+						>.
+					{/if}
+				</div>
+			{/if}
+			{#if data.trains.crs == 'LIU'}
+				<div class="message info">
+					This website uses UK National Rail data, which does not include any data on stops in
+					Lille.
+				</div>
+			{/if}
 
 			{#if data.trains.nrccMessages}
 				{#each data.trains.nrccMessages as msg}
@@ -72,41 +133,43 @@
 				{/each}
 			{/if}
 
-			{#if data.trains.trainServices}
-				{#each data.trains.trainServices as train}
-					<a href="/stations/{data.trains.crs}/train/{train.rid}" class="train-link">
-						<div
-							class="train"
-							class:departed={train.atdSpecified}
-							class:selected={train.rid == $page.params.rid}
-						>
-							<div class="time">
-								<div class="scheduled">{getScheduledTime(train)}</div>
-								{#if train.isCancelled}
-									<div class="actual">Cancelled</div>
-								{/if}
-								{#if getActualTime(train) != getScheduledTime(train)}
-									<div class="actual">{getActualTime(train)}</div>
-								{/if}
-							</div>
-							<div class="main">
-								{#each train.destination as d}
-									<div class="dest">
-										{d.locationName}
-										<span class="via">{d.via || ''}</span>
-									</div>
-								{/each}
-								<div class="details">{train.trainid} • {train.operator}</div>
-							</div>
-							<div class="platform">
-								{#if train.platform && !train.platformIsHidden}
-									{train.platform}
-								{/if}
-							</div>
-						</div></a
+			{#each services as train}
+				<a href="/stations/{data.trains.crs}/train/{train.rid}" class="train-link">
+					<div
+						class="train"
+						class:departed={train.atdSpecified}
+						class:selected={train.rid == $page.params.rid}
 					>
-				{/each}
-			{/if}
+						<div class="time">
+							<div class="scheduled">{getScheduledTime(train)}</div>
+							{#if train.isCancelled}
+								<div class="actual">Cancelled</div>
+							{/if}
+							{#if getActualTime(train) != getScheduledTime(train)}
+								<div class="actual">{getActualTime(train)}</div>
+							{/if}
+						</div>
+						<div class="main">
+							{#each train.destination as d}
+								<div class="dest">
+									{d.locationName}
+									<span class="via">{d.via || ''}</span>
+								</div>
+							{/each}
+							<div class="details">{train.trainid} • {train.operator}</div>
+						</div>
+						<div class="platform">
+							{#if train.type == 'bus'}
+								🚌
+							{:else if train.type == 'ferry'}
+								⛴️
+							{:else if train.platform && !train.platformIsHidden}
+								{train.platform}
+							{/if}
+						</div>
+					</div></a
+				>
+			{/each}
 		</div>
 		<div class="footer">
 			<a href="https://github.com/Gaelan/yadfe">Source</a>
@@ -152,6 +215,15 @@
 		border-radius: 5px;
 		margin-bottom: 5px;
 		border: 1px solid black;
+	}
+	.message.info {
+		background-color: lightblue;
+	}
+	.message :global(p) {
+		margin: 0;
+	}
+	.message :global(p:not(:last-child)) {
+		margin-bottom: 5px;
 	}
 	.train {
 		border: 1px solid black;

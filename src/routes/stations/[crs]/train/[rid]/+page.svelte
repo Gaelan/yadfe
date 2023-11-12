@@ -1,12 +1,15 @@
 <script lang="ts">
 	import type { HuxleyServiceLocation } from './+page.js';
 	import reasons from '$lib/reasons.json';
+	import { dev } from '$app/environment';
 
 	export let data;
 
 	const passengerStopActivities = ['D', 'R', 'T', 'TB', 'TF', 'U'];
 
-	$: console.log(data.details);
+	$: if (dev) {
+		console.log(data.details);
+	}
 
 	function getScheduledTime(train: HuxleyServiceLocation) {
 		let time;
@@ -75,9 +78,19 @@
 		{data.details.trainid} • {data.details.operator} •
 		<a
 			href="https://www.realtimetrains.co.uk/service/gb-nr:{data.details
-				.uid}/{data.details.sdd.split('T')[0]}/detailed">RTT</a
+				.uid}/{data.details.sdd.split('T')[0]}/detailed"
 		>
+			RTT
+		</a>
 	</div>
+
+	{#if data.details.operatorCode == 'LT'}
+		<div class="info">
+			This website uses National Rail data, which only includes Underground stations where the
+			Underground shares National Rail track. For full information on Tube services, see
+			<a href="https://intertube.eta.st">intertube</a>.
+		</div>
+	{/if}
 
 	{#if data.details.cancelReason}
 		<div class="cancellation">
@@ -168,8 +181,20 @@
 		align-self: center;
 	}
 
+	.delay,
+	.cancellation,
+	.info {
+		padding: 5px;
+		border-radius: 5px;
+		margin-top: 5px;
+		margin-bottom: 5px;
+		border: 1px solid black;
+	}
 	.delay {
 		background-color: yellow;
+	}
+	.cancellation {
+		background-color: red;
 		padding: 5px;
 		border-radius: 5px;
 		margin-top: 5px;
@@ -177,8 +202,8 @@
 		border: 1px solid black;
 	}
 
-	.cancellation {
-		background-color: red;
+	.info {
+		background-color: lightblue;
 		padding: 5px;
 		border-radius: 5px;
 		margin-top: 5px;

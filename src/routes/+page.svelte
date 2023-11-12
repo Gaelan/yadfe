@@ -60,7 +60,7 @@
 
 <div class="station-search" class:has-results={results.length > 0}>
 	<form on:submit={goToFirst}>
-		<input autofocus on:input={handleInput} placeholder="Search" />
+		<input autofocus on:input={handleInput} placeholder="Search" autocorrect="off" />
 	</form>
 	<div class="results">
 		{#each results as station (station.crsCode)}

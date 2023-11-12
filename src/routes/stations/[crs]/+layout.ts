@@ -27,10 +27,13 @@ export type HuxleyService = {
 	uid: string;
 };
 export type HuxleyDepartures = {
-	trainServices: HuxleyService[];
+	trainServices: HuxleyService[] | null;
+	busServices: HuxleyService[] | null;
+	ferryServices: HuxleyService[] | null;
 	locationName: string;
 	nrccMessages: { category: number; severity: number; xhtmlMessage: string }[];
 	crs: string;
+	stationManagerCode: string;
 };
 
 export async function load({ fetch, params }) {

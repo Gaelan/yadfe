@@ -106,6 +106,11 @@
 				{/each}
 			{/if}
 		</div>
+		<div class="footer">
+			<a href="https://github.com/Gaelan/yadfe">Source</a>
+			• Powered by
+			<a href="http://huxley2.azurewebsites.net">Huxley</a>
+		</div>
 		<img class="nre" src="/nre.png" alt="Powered by National Rail Enquiries" />
 	</div>
 	<slot />
@@ -205,6 +210,10 @@
 		background-color: white;
 		padding: 5px;
 		border-radius: 5px;
+	}
+	.footer {
+		margin: 10px;
+		text-align: center;
 	}
 
 	@media (max-width: 40em) {

@@ -9,4 +9,8 @@
 	:global(*) {
 		box-sizing: border-box;
 	}
+	:global(a) {
+		text-decoration: none;
+		color: blue;
+	}
 </style>

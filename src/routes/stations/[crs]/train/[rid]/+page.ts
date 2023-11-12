@@ -10,6 +10,7 @@ export type HuxleyServiceLocation = {
 	activities: string;
 	locationName: string;
 	platform: string;
+	platformIsHidden: boolean;
 
 	isPass: boolean;
 

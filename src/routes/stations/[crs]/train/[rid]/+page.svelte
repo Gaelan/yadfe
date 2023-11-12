@@ -44,8 +44,19 @@
 	}
 </script>
 
+<svelte:head
+	><title>
+		{getScheduledTime(data.details.locations[0])}
+		{data.details.locations[0].locationName} to {data.details.locations[
+			data.details.locations.length - 1
+		].locationName}
+	</title></svelte:head
+>
+
 <div class="details">
-	<a class="back" href="/stations/{data.trains.crs}">← Trains from {data.trains.locationName}</a>
+	<a class="back" href="/stations/{data.trains.crs}">
+		← Departures from {data.trains.locationName}
+	</a>
 	<h1>
 		{getScheduledTime(data.details.locations[0])}
 		{data.details.locations[0].locationName} to {data.details.locations[
@@ -77,7 +88,9 @@
 							{/if}
 						</div>
 					</div>
-					<div class="platform">{loc.platform}</div>
+					<div class="platform">
+						{#if !loc.platformIsHidden}{loc.platform}{/if}
+					</div>
 				</div>
 			{/if}
 		{/each}
@@ -127,5 +140,16 @@
 		text-decoration: none;
 		color: blue;
 		margin-top: 0.5ex;
+	}
+	.platform {
+		min-width: 2em;
+		text-align: center;
+		align-self: center;
+	}
+
+	@media (min-width: 40em) {
+		.back {
+			display: none;
+		}
 	}
 </style>

@@ -56,6 +56,8 @@
 	};
 </script>
 
+<svelte:head><title>Train departures</title></svelte:head>
+
 <div class="station-search" class:has-results={results.length > 0}>
 	<form on:submit={goToFirst}>
 		<input autofocus on:input={handleInput} placeholder="Search" />
@@ -74,13 +76,14 @@
 	.station-search {
 		border: 1px solid black;
 		max-width: 40em;
-		margin: auto;
 		margin-top: 4ex;
+		margin-bottom: 10px;
+		margin-left: auto;
+		margin-right: auto;
 		border-radius: 5px;
 		display: flex;
 		flex-direction: column;
 		background-color: white;
-		margin: 10px;
 	}
 
 	input {

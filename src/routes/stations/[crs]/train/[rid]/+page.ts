@@ -4,6 +4,8 @@ export type HuxleyServiceDetails = {
 	sdd: string;
 	uid: string;
 	locations: HuxleyServiceLocation[];
+	delayReason: { tiploc: string; near: boolean; value: number };
+	cancelReason: { tiploc: string; near: boolean; value: number };
 };
 
 export type HuxleyServiceLocation = {

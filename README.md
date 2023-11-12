@@ -7,7 +7,9 @@ train information system.
 Information is loaded via [the public Huxley API][huxley], as Network Rail's
 API sign-up isn't working at the minute.
 
-[huxley]
+Contributions very welcome!
+
+[huxley]: https://huxley2.azurewebsites.net
 
 ## Developing
 

@@ -1,11 +1,12 @@
 <script lang="ts">
 	import type { HuxleyServiceLocation } from './+page.js';
+	import reasons from '$lib/reasons.json';
 
 	export let data;
 
 	const passengerStopActivities = ['D', 'R', 'T', 'TB', 'TF', 'U'];
 
-	// $: console.log(data.details);
+	$: console.log(data.details);
 
 	function getScheduledTime(train: HuxleyServiceLocation) {
 		let time;
@@ -42,16 +43,22 @@
 			minute: '2-digit'
 		});
 	}
+
+	const delayReasons: Record<string, string> = reasons.delay;
+	const cancelReasons: Record<string, string> = reasons.cancel;
+
+	let lastDeparted: number;
+	$: lastDeparted = data.details.locations.findLastIndex((x) => x.atdSpecified);
 </script>
 
-<svelte:head
-	><title>
+<svelte:head>
+	<title>
 		{getScheduledTime(data.details.locations[0])}
 		{data.details.locations[0].locationName} to {data.details.locations[
 			data.details.locations.length - 1
 		].locationName}
-	</title></svelte:head
->
+	</title>
+</svelte:head>
 
 <div class="details">
 	<a class="back" href="/stations/{data.trains.crs}">
@@ -72,10 +79,22 @@
 		>
 	</div>
 
+	{#if data.details.cancelReason}
+		<div class="cancellation">
+			{cancelReasons[data.details.cancelReason.value]}.
+		</div>
+	{/if}
+
+	{#if data.details.delayReason}
+		<div class="delay">
+			{delayReasons[data.details.delayReason.value]}.
+		</div>
+	{/if}
+
 	<div class="stops">
-		{#each data.details.locations as loc}
+		{#each data.details.locations as loc, idx}
 			{#if loc.activities.split(' ').some((a) => passengerStopActivities.includes(a))}
-				<div class="stop" class:departed={loc.atdSpecified}>
+				<div class="stop" class:departed={idx <= lastDeparted}>
 					<div class="stop-main">
 						<div class="name">{loc.locationName}</div>
 						<div class="times">
@@ -89,7 +108,9 @@
 						</div>
 					</div>
 					<div class="platform">
-						{#if !loc.platformIsHidden}{loc.platform}{/if}
+						{#if loc.platform && !loc.platformIsHidden}
+							{loc.platform}
+						{/if}
 					</div>
 				</div>
 			{/if}
@@ -145,6 +166,24 @@
 		min-width: 2em;
 		text-align: center;
 		align-self: center;
+	}
+
+	.delay {
+		background-color: yellow;
+		padding: 5px;
+		border-radius: 5px;
+		margin-top: 5px;
+		margin-bottom: 5px;
+		border: 1px solid black;
+	}
+
+	.cancellation {
+		background-color: red;
+		padding: 5px;
+		border-radius: 5px;
+		margin-top: 5px;
+		margin-bottom: 5px;
+		border: 1px solid black;
 	}
 
 	@media (min-width: 40em) {

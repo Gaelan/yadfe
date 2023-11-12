@@ -99,7 +99,9 @@
 								<div class="details">{train.trainid} • {train.operator}</div>
 							</div>
 							<div class="platform">
-								{#if !train.platformIsHidden}{train.platform}{/if}
+								{#if train.platform && !train.platformIsHidden}
+									{train.platform}
+								{/if}
 							</div>
 						</div></a
 					>

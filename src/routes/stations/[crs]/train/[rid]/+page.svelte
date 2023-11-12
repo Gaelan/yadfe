@@ -45,6 +45,7 @@
 </script>
 
 <div class="details">
+	<a class="back" href="/stations/{data.trains.crs}">← Trains from {data.trains.locationName}</a>
 	<h1>
 		{getScheduledTime(data.details.locations[0])}
 		{data.details.locations[0].locationName} to {data.details.locations[
@@ -119,5 +120,12 @@
 	}
 	.departed {
 		color: #555;
+	}
+
+	.back {
+		display: block;
+		text-decoration: none;
+		color: blue;
+		margin-top: 0.5ex;
 	}
 </style>

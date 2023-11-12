@@ -59,7 +59,7 @@
 </script>
 
 <div class="root">
-	<div class="board">
+	<div class="board" class:board-only={$page.route.id == '/stations/[crs]'}>
 		<div class="board-main">
 			<a class="back" href="/">← Change station</a>
 			<h1>{data.trains.locationName}</h1>
@@ -205,5 +205,16 @@
 		background-color: white;
 		padding: 5px;
 		border-radius: 5px;
+	}
+
+	@media (max-width: 40em) {
+		.board {
+			max-width: none;
+			box-shadow: none;
+			background-color: inherit;
+		}
+		.board:not(.board-only) {
+			display: none;
+		}
 	}
 </style>

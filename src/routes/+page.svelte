@@ -80,6 +80,7 @@
 		display: flex;
 		flex-direction: column;
 		background-color: white;
+		margin: 10px;
 	}
 
 	input {

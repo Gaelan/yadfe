@@ -367,5 +367,8 @@
 		.board:not(.board-only) {
 			display: none;
 		}
+		.root > :global(*) {
+			overflow: visible;
+		}
 	}
 </style>

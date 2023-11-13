@@ -58,8 +58,12 @@
 	function hideTrain(train: HuxleyStationService) {
 		if (!fromStop) return false;
 
-		const arrival = parseTime(fromStop.ata);
+		const arrival = parseTime(fromStop.sta);
 		const departure = parseTime(train.std);
+
+		console.log(arrival.toString(), departure.toString());
+
+		console.log(train.trainid, arrival.until(departure).toString());
 
 		if (arrival.until(departure).total('minute') < -5) {
 			return true;

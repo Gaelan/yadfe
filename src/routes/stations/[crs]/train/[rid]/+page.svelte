@@ -90,6 +90,13 @@
 							{#if getScheduledTime(loc) != getActualTime(loc)}
 								<span class="actual">{getActualTime(loc)}</span>
 							{/if}
+							{#if loc.associations}
+								{#each loc.associations.filter((x) => x.category == 1) as split}
+									• splits <a href="/stations/{data.trains.crs}/train/{split.rid}">
+										towards {split.destination}
+									</a>
+								{/each}
+							{/if}
 						</div>
 					</div>
 					<div class="platform">

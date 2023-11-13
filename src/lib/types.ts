@@ -29,6 +29,13 @@ export type HuxleyServiceDetails = {
 	locations: HuxleyServiceLocation[];
 };
 
+export type HuxleyAssociation = {
+	//0=join 1=split 2="link"(???) 3=next/prev
+	category: number;
+	destination: string;
+	rid: string;
+};
+
 export type HuxleyServiceLocation = HuxleyTimes & {
 	locationName: string;
 	crs: string;
@@ -43,6 +50,8 @@ export type HuxleyServiceLocation = HuxleyTimes & {
 
 	departureType: number;
 	departureTypeSpecified: number;
+
+	associations: HuxleyAssociation[];
 };
 
 export type HuxleyStationService = HuxleyTimes & {

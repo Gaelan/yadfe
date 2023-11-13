@@ -87,7 +87,7 @@
 	}
 
 	input {
-		font-size: 200%;
+		font-size: 125%;
 		width: 100%;
 		appearance: none;
 		border: none;
@@ -103,7 +103,7 @@
 	}
 	.results a {
 		display: flex;
-		font-size: 200%;
+		font-size: 125%;
 		color: black;
 		text-decoration: none;
 		padding: 5px;

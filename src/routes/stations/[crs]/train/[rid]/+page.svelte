@@ -73,7 +73,7 @@
 		{#each data.details.locations as loc, idx}
 			{#if loc.activities.split(' ').some((a) => passengerStopActivities.includes(a))}
 				<a
-					href="/stations/{loc.crs}?from={data.details.rid}"
+					href={loc.staSpecified ? `/stations/${loc.crs}?from=${data.details.rid}` : null}
 					class="stop"
 					class:departed={idx <= lastDeparted}
 				>

@@ -370,5 +370,8 @@
 		.root > :global(*) {
 			overflow: visible;
 		}
+		.root {
+			display: unset;
+		}
 	}
 </style>

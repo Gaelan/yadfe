@@ -1,7 +1,8 @@
 <script lang="ts">
-	import type { HuxleyServiceLocation } from './+page.js';
+	import type { HuxleyServiceLocation } from '$lib/types';
 	import reasons from '$lib/reasons.json';
 	import { dev } from '$app/environment';
+	import { getActualTime, getScheduledTime } from '$lib/utils.js';
 
 	export let data;
 
@@ -9,42 +10,6 @@
 
 	$: if (dev) {
 		console.log(data.details);
-	}
-
-	function getScheduledTime(train: HuxleyServiceLocation) {
-		let time;
-		if (train.stdSpecified) {
-			time = train.std;
-		} else {
-			time = train.sta;
-		}
-		return new Date(time).toLocaleTimeString('en-GB', {
-			hourCycle: 'h24',
-			hour: '2-digit',
-			minute: '2-digit'
-		});
-	}
-
-	function getActualTime(train: HuxleyServiceLocation) {
-		let time;
-		if (train.atdSpecified) {
-			time = train.atd;
-		} else if (train.etdSpecified) {
-			time = train.etd;
-		} else if (train.stdSpecified) {
-			time = train.std;
-		} else if (train.ataSpecified) {
-			time = train.ata;
-		} else if (train.etaSpecified) {
-			time = train.eta;
-		} else {
-			time = train.sta;
-		}
-		return new Date(time).toLocaleTimeString('en-GB', {
-			hourCycle: 'h24',
-			hour: '2-digit',
-			minute: '2-digit'
-		});
 	}
 
 	const delayReasons: Record<string, string> = reasons.delay;
@@ -107,13 +72,20 @@
 	<div class="stops">
 		{#each data.details.locations as loc, idx}
 			{#if loc.activities.split(' ').some((a) => passengerStopActivities.includes(a))}
-				<div class="stop" class:departed={idx <= lastDeparted}>
+				<a
+					href="/stations/{loc.crs}?from={data.details.rid}"
+					class="stop"
+					class:departed={idx <= lastDeparted}
+				>
 					<div class="stop-main">
 						<div class="name">{loc.locationName}</div>
 						<div class="times">
 							<span class="scheduled">{getScheduledTime(loc)}</span>
 							{#if loc.isCancelled}
 								<span class="actual">Cancelled</span>
+							{/if}
+							{#if loc.departureTypeSpecified && loc.departureType == 3}
+								<span class="actual">Delayed</span>
 							{/if}
 							{#if getScheduledTime(loc) != getActualTime(loc)}
 								<span class="actual">{getActualTime(loc)}</span>
@@ -125,7 +97,7 @@
 							{loc.platform}
 						{/if}
 					</div>
-				</div>
+				</a>
 			{/if}
 		{/each}
 	</div>
@@ -147,8 +119,10 @@
 		margin-bottom: 5px;
 	}
 	.stop {
+		display: block;
 		padding: 5px;
 		display: flex;
+		color: black;
 	}
 	.stop:not(:last-child) {
 		border-bottom: 1px solid #aaa;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { HuxleyServiceLocation } from '$lib/types';
+	import type { HuxleyAssociation, HuxleyServiceLocation } from '$lib/types';
 	import reasons from '$lib/reasons.json';
 	import { dev } from '$app/environment';
 	import { getActualTime, getScheduledTime } from '$lib/utils.js';
@@ -17,27 +17,27 @@
 
 	let lastDeparted: number;
 	$: lastDeparted = data.details.locations.findLastIndex((x) => x.atdSpecified);
+
+	$: depLoc = data.details.locations[0].locationName;
+	$: arrMerge = (
+		data.details.locations[data.details.locations.length - 1].associations || []
+	).filter((a) => a.category == 0);
+	$: arrLoc =
+		arrMerge.length > 0
+			? arrMerge.map((x) => x.destination).join(' and ')
+			: data.details.locations[data.details.locations.length - 1].locationName;
+	$: description = `${getScheduledTime(data.details.locations[0])} ${depLoc} to ${arrLoc}`;
 </script>
 
 <svelte:head>
-	<title>
-		{getScheduledTime(data.details.locations[0])}
-		{data.details.locations[0].locationName} to {data.details.locations[
-			data.details.locations.length - 1
-		].locationName}
-	</title>
+	<title>{description}</title>
 </svelte:head>
 
 <div class="details">
 	<a class="back" href="/stations/{data.trains.crs}">
 		← Departures from {data.trains.locationName}
 	</a>
-	<h1>
-		{getScheduledTime(data.details.locations[0])}
-		{data.details.locations[0].locationName} to {data.details.locations[
-			data.details.locations.length - 1
-		].locationName}
-	</h1>
+	<h1>{description}</h1>
 
 	<div class="subtitle">
 		{data.details.trainid} • {data.details.operator} •
@@ -108,6 +108,13 @@
 			{/if}
 		{/each}
 	</div>
+	{#each arrMerge as merge}
+		<div class="arr-merge">
+			Merges with <a href="/stations/{data.trains.crs}/train/{merge.rid}">
+				the {merge.origin} to {merge.destination}</a
+			>.
+		</div>
+	{/each}
 </div>
 
 <style>

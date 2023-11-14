@@ -162,7 +162,9 @@
 						<div class="dest">
 							from {data.from?.locations[0].locationName}
 						</div>
-						<div class="details">{data.from?.trainid} • {data.from?.operator}</div>
+						<div class="details">
+							{data.from?.trainid} • {data.from?.operator}
+						</div>
 					</div>
 					<div class="platform">
 						{fromStop.platform}
@@ -202,7 +204,15 @@
 										<span class="via">{d.via || ''}</span>
 									</div>
 								{/each}
-								<div class="details">{train.trainid} • {train.operator}</div>
+								<div class="details">
+									{train.trainid} • {train.operator}
+									{#if train.length}
+										• {train.length} coaches
+									{/if}
+									{#if train.activities.split(' ').includes('R')}
+										• by request
+									{/if}
+								</div>
 							</div>
 							<div class="platform">
 								{#if train.type == 'bus'}

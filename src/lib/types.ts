@@ -64,13 +64,17 @@ export type HuxleyStationService = HuxleyTimes & {
 
 	platform: string;
 	operator: string;
-	trainid: string;
+	activities: string;
+
+	length: number;
+
 	isCancelled: boolean;
 	platformIsHidden: boolean;
 
 	departureType: number;
 	departureTypeSpecified: number;
 
+	trainid: string;
 	rid: string;
 	uid: string;
 };

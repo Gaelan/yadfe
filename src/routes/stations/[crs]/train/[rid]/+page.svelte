@@ -90,13 +90,24 @@
 							{#if getScheduledTime(loc) != getActualTime(loc)}
 								<span class="actual">{getActualTime(loc)}</span>
 							{/if}
-							{#if loc.associations}
-								{#each loc.associations.filter((x) => x.category == 1) as split}
-									• splits <a href="/stations/{data.trains.crs}/train/{split.rid}">
-										towards {split.destination}
-									</a>
-								{/each}
-							{/if}
+							<span class="stop-detail">
+								{#if loc.associations}
+									{#each loc.associations.filter((x) => x.category == 1) as split}
+										• splits <a href="/stations/{data.trains.crs}/train/{split.rid}">
+											towards {split.destination}
+										</a>
+									{/each}
+								{/if}
+								{#if loc.activities.split(' ').includes('U')}
+									• does not set down
+								{/if}
+								{#if loc.activities.split(' ').includes('D')}
+									• does not pick up
+								{/if}
+								{#if loc.activities.split(' ').includes('R')}
+									• by request
+								{/if}
+							</span>
 						</div>
 					</div>
 					<div class="platform">
@@ -203,5 +214,9 @@
 		.back {
 			display: none;
 		}
+	}
+
+	.stop-detail {
+		color: #555;
 	}
 </style>

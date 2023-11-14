@@ -57,6 +57,13 @@
 		</div>
 	{/if}
 
+	{#if data.details.operatorCode == 'TW'}
+		<div class="info">
+			This website uses National Rail data, which only shows Tyne & Wear Metro stations where the
+			Metro shares National Rail track.
+		</div>
+	{/if}
+
 	{#if data.details.cancelReason}
 		<div class="cancellation">
 			{cancelReasons[data.details.cancelReason.value]}.

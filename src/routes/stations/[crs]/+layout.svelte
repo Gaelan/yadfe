@@ -104,6 +104,13 @@
 					lines are not shown.
 				</div>
 			{/if}
+			{#if data.trains.stationManagerCode == 'TW'}
+				<div class="message info">
+					This website uses National Rail data, which only includes Tyne & Wear Metro services on
+					the Green line.
+				</div>
+			{/if}
+
 			{#if data.trains.stationManagerCode == 'ES' && data.trains.crs != 'LIU'}
 				<div class="message info">
 					This website uses UK National Rail data, which includes only Eurostar services to and from

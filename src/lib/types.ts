@@ -46,6 +46,7 @@ export type HuxleyServiceLocation = HuxleyTimes & {
 	platformIsHidden: boolean;
 
 	isPass: boolean;
+	isOperational: boolean;
 
 	isCancelled: boolean;
 

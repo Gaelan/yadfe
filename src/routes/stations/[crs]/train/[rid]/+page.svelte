@@ -6,7 +6,7 @@
 
 	export let data;
 
-	const passengerStopActivities = ['D', 'R', 'T', 'TB', 'TF', 'U'];
+	// const passengerStopActivities = ['D', 'R', 'T', 'TB', 'TF', 'U'];
 
 	$: if (dev) {
 		console.log(data.details);
@@ -71,7 +71,7 @@
 
 	<div class="stops">
 		{#each data.details.locations as loc, idx}
-			{#if loc.activities.split(' ').some((a) => passengerStopActivities.includes(a))}
+			{#if !loc.isPass && !loc.isOperational}
 				<a
 					href={loc.staSpecified ? `/stations/${loc.crs}?from=${data.details.rid}` : null}
 					class="stop"

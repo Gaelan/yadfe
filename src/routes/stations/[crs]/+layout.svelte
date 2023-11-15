@@ -184,7 +184,7 @@
 				<div class="message info">This site cannot display trains that left over 2 hours ago.</div>
 			{/if}
 
-			{#each services as train}
+			{#each services as train (train.rid)}
 				{#if !hideTrain(train)}
 					<a href={trainUrl(train)} class="train-link">
 						<div
@@ -242,8 +242,11 @@
 			{/if}
 		</div>
 		<div class="footer">
-			<a href="https://github.com/Gaelan/yadfe">Source</a>
-			• Powered by
+			by <a href="https://gaelan.me">Gaelan</a>
+			• <a href="mailto:gbs+trains@canishe.com">Feedback</a>
+			• <a href="https://github.com/Gaelan/yadfe">Source</a>
+			<br />
+			Powered by
 			<a href="http://huxley2.azurewebsites.net">Huxley</a>
 		</div>
 		<a class="nre" href="https://nationalrail.co.uk">

@@ -387,5 +387,13 @@
 		.board:not(.board-only) {
 			display: none;
 		}
+
+		.root {
+			display: unset;
+		}
+
+		.root > :global(*) {
+			height: auto;
+		}
 	}
 </style>

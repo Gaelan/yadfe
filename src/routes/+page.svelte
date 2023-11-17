@@ -75,7 +75,7 @@
 <style>
 	.station-search {
 		border: 1px solid black;
-		max-width: 40em;
+		max-width: 30em;
 		margin-top: 4ex;
 		margin-bottom: 10px;
 		margin-left: auto;

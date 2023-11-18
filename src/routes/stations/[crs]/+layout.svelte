@@ -275,8 +275,8 @@
 	.board {
 		padding-left: 10px;
 		padding-right: 10px;
-		background: #ddd;
-		box-shadow: 0 0 10px 5px #ccc;
+		background: var(--background-sidebar);
+		box-shadow: 0 0 10px 5px var(--shadow-sidebar);
 		max-width: calc(min(30em, 50vw));
 		display: flex;
 		flex-direction: column;
@@ -285,19 +285,19 @@
 		flex: 1;
 	}
 	.message {
-		background-color: yellow;
+		background-color: var(--background-yellow);
 		padding: 5px;
 		border-radius: 5px;
 		margin-bottom: 5px;
-		border: 1px solid black;
+		border: 1px solid var(--border);
 	}
 	.message.info,
 	.message[data-severity='0'] {
-		background-color: lightblue;
+		background-color: var(--background-info);
 	}
 	.message[data-severity='2'],
 	.message[data-severity='3'] {
-		background-color: red;
+		background-color: var(--background-red);
 	}
 	.message :global(p) {
 		margin: 0;
@@ -306,37 +306,37 @@
 		margin-bottom: 5px;
 	}
 	.train {
-		border: 1px solid black;
+		border: 1px solid var(--border);
 		border-radius: 5px;
 		margin-bottom: 5px;
 		padding: 5px;
 		display: flex;
 		min-height: 6ex;
-		background: white;
+		background: var(--background);
 	}
 	.time {
 		text-align: center;
 		align-self: center;
 	}
 	.departed {
-		color: #555;
+		color: var(--text-light);
 	}
 	.scheduled {
 		font-size: 175%;
 		font-variant-numeric: tabular-nums;
 	}
 	.selected {
-		background-color: #eee;
+		background-color: var(--background-selected);
 	}
 	.actual {
-		color: red;
+		color: var(--text-red);
 	}
 	.dest {
 		font-weight: bold;
 	}
 	.details {
 		font-size: 90%;
-		color: #555;
+		color: var(--text-light);
 	}
 	.main {
 		flex: 1;
@@ -349,12 +349,12 @@
 		align-self: center;
 	}
 	.via {
-		color: #666;
+		color: var(--text-light);
 	}
 	.back {
 		display: block;
 		text-decoration: none;
-		color: blue;
+		color: var(--text-link);
 		margin-top: 0.5ex;
 	}
 	.nre {

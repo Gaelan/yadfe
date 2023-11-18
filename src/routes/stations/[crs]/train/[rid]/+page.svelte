@@ -145,19 +145,20 @@
 		padding-right: 10px;
 	}
 	.stops {
-		border: 1px solid black;
+		border: 1px solid var(--border);
 		border-radius: 5px;
 		width: 100%;
 		margin-bottom: 5px;
+		margin-top: 5px;
 	}
 	.stop {
 		display: block;
 		padding: 5px;
 		display: flex;
-		color: black;
+		color: var(--text);
 	}
 	.stop:not(:last-child) {
-		border-bottom: 1px solid #aaa;
+		border-bottom: 1px solid var(--border-light);
 	}
 	.stop-main {
 		flex: 1;
@@ -166,19 +167,19 @@
 		align-self: center;
 	}
 	.actual {
-		color: red;
+		color: var(--text-red);
 	}
 	.subtitle {
-		color: #555;
+		color: var(--text-light);
 	}
 	.departed {
-		color: #555;
+		color: var(--text-light);
 	}
 
 	.back {
 		display: block;
 		text-decoration: none;
-		color: blue;
+		color: var(--text-link);
 		margin-top: 0.5ex;
 	}
 	.platform {
@@ -194,27 +195,27 @@
 		border-radius: 5px;
 		margin-top: 5px;
 		margin-bottom: 5px;
-		border: 1px solid black;
+		border: 1px solid var(--border);
 	}
 	.delay {
-		background-color: yellow;
+		background-color: var(--background-yellow);
 	}
 	.cancellation {
-		background-color: red;
+		background-color: var(--background-red);
 		padding: 5px;
 		border-radius: 5px;
 		margin-top: 5px;
 		margin-bottom: 5px;
-		border: 1px solid black;
+		border: 1px solid var(--border);
 	}
 
 	.info {
-		background-color: lightblue;
+		background-color: var(--background-info);
 		padding: 5px;
 		border-radius: 5px;
 		margin-top: 5px;
 		margin-bottom: 5px;
-		border: 1px solid black;
+		border: 1px solid var(--border);
 	}
 
 	@media (min-width: 40em) {
@@ -224,6 +225,6 @@
 	}
 
 	.stop-detail {
-		color: #555;
+		color: var(--text-light);
 	}
 </style>

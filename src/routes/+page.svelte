@@ -75,7 +75,7 @@
 
 <style>
 	.station-search {
-		border: 1px solid black;
+		border: 1px solid var(--border);
 		max-width: 30em;
 		margin-top: 4ex;
 		margin-bottom: 10px;
@@ -84,7 +84,7 @@
 		border-radius: 5px;
 		display: flex;
 		flex-direction: column;
-		background-color: white;
+		background-color: var(--background);
 	}
 
 	input {
@@ -94,9 +94,11 @@
 		border: none;
 		border-radius: 5px;
 		padding: 5px;
+		background-color: var(--background);
+		color: var(--text);
 	}
 	.has-results input {
-		border-bottom: 1px solid black;
+		border-bottom: 1px solid var(--border);
 		border-radius: 5px 5px 0px 0px;
 	}
 	.results {
@@ -105,17 +107,17 @@
 	.results a {
 		display: flex;
 		font-size: 125%;
-		color: black;
+		color: var(--text);
 		text-decoration: none;
 		padding: 5px;
 	}
 	.results a:not(:last-child) {
-		border-bottom: 1px #aaa solid;
+		border-bottom: 1px var(--border-light) solid;
 	}
 	.name {
 		flex: 1;
 	}
 	.crs {
-		color: #888;
+		color: var(--text-light-big);
 	}
 </style>

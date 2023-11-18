@@ -350,6 +350,7 @@
 	}
 	.via {
 		color: var(--text-light);
+		white-space: nowrap;
 	}
 	.back {
 		display: block;

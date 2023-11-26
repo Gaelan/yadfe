@@ -24,7 +24,7 @@
 	onMount(() => {
 		interval = setInterval(() => {
 			invalidateAll();
-		}, 60 * 1000);
+		}, 60 * 1000) as unknown as number;
 	});
 	onDestroy(() => {
 		if (interval !== null) {
@@ -32,15 +32,19 @@
 		}
 	});
 
-	function trainUrl(train: HuxleyStationService) {
-		if (data.from) {
-			return `/stations/${data.trains.crs}/train/${train.rid}?from=${data.from.rid}`;
-		} else {
-			return `/stations/${data.trains.crs}/train/${train.rid}`;
-		}
-	}
+	$: queryString = (updates: Record<string, string> = {}) => {
+		const query = new URLSearchParams($page.url.search);
+		Object.keys(updates).forEach((upd) => {
+			query.set(upd, updates[upd]);
+		});
+		return query.toString();
+	};
 
-	function showAsDeparted(train: HuxleyStationService) {
+	$: trainUrl = (train: HuxleyStationService) => {
+		return `/stations/${data.trains.crs}/train/${train.rid}?${queryString()}`;
+	};
+
+	$: showAsDeparted = (train: HuxleyStationService) => {
 		if (fromStop) {
 			const arrival = fromStop.ataSpecified
 				? fromStop.ata
@@ -51,12 +55,13 @@
 
 			return departure < arrival;
 		} else {
-			return train.ataSpecified;
+			return train.ataSpecified || train.atdSpecified;
 		}
-	}
+	};
 
-	function hideTrain(train: HuxleyStationService) {
+	$: hideTrain = (train: HuxleyStationService) => {
 		if (!fromStop) return false;
+		if ($page.url.searchParams.has('timeOffset')) return false;
 
 		const arrival = parseTime(fromStop.sta);
 		const departure = parseTime(train.std);
@@ -65,7 +70,7 @@
 			return true;
 		}
 		return false;
-	}
+	};
 
 	let services: (HuxleyStationService & { type: string })[] = [];
 	$: services = (data.trains.trainServices || [])
@@ -89,6 +94,15 @@
 		fromStop = data.from.locations.find((loc) => loc.crs == data.trains.crs);
 	} else {
 		fromStop = undefined;
+	}
+
+	let adjustmentOffset: number;
+	$: if (services.length >= 50) {
+		adjustmentOffset = parseTime(services[0].std)
+			.until(parseTime(services[24].std))
+			.total('minutes');
+	} else {
+		adjustmentOffset = 60;
 	}
 </script>
 
@@ -154,6 +168,13 @@
 				{/each}
 			{/if}
 
+			{#if data.offset > -120}
+				<a
+					href="?{queryString({
+						timeOffset: Math.max(data.offset - adjustmentOffset, -120).toString()
+					})}">Earlier trains</a
+				>
+			{/if}
 			{#if fromStop}
 				<div class="train">
 					<div class="time">
@@ -234,6 +255,16 @@
 					>
 				{/if}
 			{/each}
+
+			{#if data.offset < 119}
+				<a
+					href="?{queryString({
+						timeOffset: Math.min(data.offset + adjustmentOffset, 119).toString()
+					})}"
+				>
+					Later trains
+				</a>
+			{/if}
 
 			{#if data.trimmedFuture}
 				<div class="message info">

@@ -4,6 +4,7 @@ import { Temporal } from '@js-temporal/polyfill';
 export async function load({ fetch, params, url }) {
 	let from: HuxleyServiceDetails | null = null;
 	let offset = 0;
+	const paramOffset = url.searchParams.get('timeOffset');
 	if (url.searchParams.get('from')) {
 		const fromRid = url.searchParams.get('from');
 		from = await (await fetch(`https://huxley2.azurewebsites.net/service/${fromRid}`)).json();
@@ -16,6 +17,10 @@ export async function load({ fetch, params, url }) {
 				offset = Math.round(now.until(time).total('minute')) - 5;
 			}
 		}
+	}
+
+	if (paramOffset !== null) {
+		offset = parseInt(paramOffset);
 	}
 
 	let trimmedPast = false;
@@ -35,5 +40,5 @@ export async function load({ fetch, params, url }) {
 		)
 	).json();
 
-	return { trains: data, from, trimmedPast, trimmedFuture };
+	return { trains: data, from, offset, trimmedPast, trimmedFuture };
 }

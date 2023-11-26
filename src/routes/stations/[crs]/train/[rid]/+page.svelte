@@ -1,8 +1,9 @@
 <script lang="ts">
-	import type { HuxleyAssociation, HuxleyServiceLocation } from '$lib/types';
+	import type { HuxleyAssociation, HuxleyServiceLocation, HuxleyStationService } from '$lib/types';
 	import reasons from '$lib/reasons.json';
 	import { dev } from '$app/environment';
 	import { getActualTime, getScheduledTime } from '$lib/utils.js';
+	import { page } from '$app/stores';
 
 	export let data;
 
@@ -14,6 +15,18 @@
 
 	const delayReasons: Record<string, string> = reasons.delay;
 	const cancelReasons: Record<string, string> = reasons.cancel;
+
+	$: queryString = (updates: Record<string, string> = {}) => {
+		const query = new URLSearchParams($page.url.search);
+		Object.keys(updates).forEach((upd) => {
+			query.set(upd, updates[upd]);
+		});
+		return query.toString();
+	};
+
+	$: trainUrl = (train: { rid: string }) => {
+		return `/stations/${data.trains.crs}/train/${train.rid}?${queryString()}`;
+	};
 
 	let lastDeparted: number;
 	$: lastDeparted = data.details.locations.findLastIndex((x) => x.atdSpecified);
@@ -100,7 +113,7 @@
 							<span class="stop-detail">
 								{#if loc.associations}
 									{#each loc.associations.filter((x) => x.category == 1) as split}
-										• splits <a href="/stations/{data.trains.crs}/train/{split.rid}">
+										• splits <a href={trainUrl(split)}>
 											towards {split.destination}
 										</a>
 									{/each}
@@ -128,9 +141,7 @@
 	</div>
 	{#each arrMerge as merge}
 		<div class="arr-merge">
-			Merges with <a href="/stations/{data.trains.crs}/train/{merge.rid}">
-				the {merge.origin} to {merge.destination}</a
-			>.
+			Merges with <a href={trainUrl(merge)}> the {merge.origin} to {merge.destination}</a>.
 		</div>
 	{/each}
 </div>

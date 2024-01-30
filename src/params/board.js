@@ -1,4 +1,4 @@
 /** @type {import('@sveltejs/kit').ParamMatcher} */
 export function match(param) {
-    return param == 'stations';
+	return ['stations', 'departures', 'arrivals'].includes(param);
 }

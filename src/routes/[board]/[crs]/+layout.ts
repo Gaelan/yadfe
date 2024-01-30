@@ -36,7 +36,9 @@ export async function load({ fetch, params, url }) {
 
 	const data: HuxleyDepartures = await (
 		await fetch(
-			`https://huxley2.azurewebsites.net/staffdepartures/${params.crs}/50?timeOffset=${offset}`
+			`https://huxley2.azurewebsites.net/staff${
+				params.board == 'stations' ? 'departures' : params.board
+			}/${params.crs}/50?timeOffset=${offset}`
 		)
 	).json();
 

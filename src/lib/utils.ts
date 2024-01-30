@@ -65,3 +65,8 @@ export function getActualArrivalTime(train: HuxleyTimes) {
 export function parseTime(time: string) {
 	return Temporal.ZonedDateTime.from(time + '[Europe/London]');
 }
+
+export function getBoardTitle(board: string, station: string) {
+	if (['stations', 'departures'].includes(board)) return 'Departures from ' + station;
+	if (board == 'arrivals') return 'Arrivals to ' + station;
+}

@@ -2,7 +2,7 @@
 	import type { HuxleyAssociation, HuxleyServiceLocation, HuxleyStationService } from '$lib/types';
 	import reasons from '$lib/reasons.json';
 	import { dev } from '$app/environment';
-	import { getActualTime, getScheduledTime } from '$lib/utils.js';
+	import { getActualTime, getScheduledTime, getBoardTitle } from '$lib/utils.js';
 	import { page } from '$app/stores';
 
 	export let data;
@@ -25,11 +25,15 @@
 	};
 
 	$: trainUrl = (train: { rid: string }) => {
-		return `/stations/${data.trains.crs}/train/${train.rid}?${queryString()}`;
+		return `/${page.params.board}/${data.trains.crs}/train/${train.rid}?${queryString()}`;
 	};
 
 	let lastDeparted: number;
-	$: lastDeparted = data.details.locations.findLastIndex((x) => x.atdSpecified);
+	$: lastDeparted = data.details.locations.findLastIndex(
+		(x) =>
+			x.atdSpecified ||
+			(x == data.details.locations[data.details.locations.length - 1] && x.ataSpecified)
+	);
 
 	$: depLoc = data.details.locations[0].locationName;
 	$: arrMerge = (
@@ -47,8 +51,8 @@
 </svelte:head>
 
 <div class="details">
-	<a class="back" href="/stations/{data.trains.crs}">
-		← Departures from {data.trains.locationName}
+	<a class="back" href="/{$page.params.board}/{data.trains.crs}">
+		← {getBoardTitle($page.params.board, data.trains.locationName)}
 	</a>
 	<h1>{description}</h1>
 
@@ -93,7 +97,7 @@
 		{#each data.details.locations as loc, idx}
 			{#if !loc.isPass && !loc.isOperational}
 				<a
-					href={loc.staSpecified ? `/stations/${loc.crs}?from=${data.details.rid}` : null}
+					href={loc.staSpecified ? `/departures/${loc.crs}?from=${data.details.rid}` : null}
 					class="stop"
 					class:departed={idx <= lastDeparted}
 				>

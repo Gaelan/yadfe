@@ -1,4 +1,4 @@
-import type { HuxleyDepartures, HuxleyServiceDetails } from '$lib/types.js';
+import type { HuxleyDepartures, HuxleyServiceDetails, HuxleyStations } from '$lib/types.js';
 import { Temporal } from '@js-temporal/polyfill';
 
 export async function load({ fetch, params, url }) {
@@ -34,11 +34,56 @@ export async function load({ fetch, params, url }) {
 		trimmedFuture = true;
 	}
 
-	const data: HuxleyDepartures = await (
+	let trains: HuxleyDepartures = await (
 		await fetch(
-			`https://huxley2.azurewebsites.net/staffdepartures/${params.crs}/50?timeOffset=${offset}`
+			`https://huxley2.azurewebsites.net/staffdepartures/${params.crs}/50?timeOffset=${offset}&expand=true`
 		)
 	).json();
 
-	return { trains: data, from, offset, trimmedPast, trimmedFuture };
+	const stations: HuxleyStations = await (
+		await fetch('https://huxley2.azurewebsites.net/crs')
+	).json();
+
+	let callsPreviously;
+	if (url.searchParams.get('callsPreviously')) {
+		const search = url.searchParams.get('callsPreviously').toLowerCase();
+		callsPreviously = stations.filter((station) => {
+			return station.crsCode.toLowerCase() === search;
+		});
+
+		if (trains.trainServices)
+			trains.trainServices = trains.trainServices.filter((trainService) => {
+				return (
+					trainService.previousLocations &&
+					trainService.previousLocations.find((loc) => loc.crs && loc.crs.toLowerCase() == search)
+				);
+			});
+	}
+
+	let callsSubsequently;
+	if (url.searchParams.get('callsSubsequently')) {
+		const search = url.searchParams.get('callsSubsequently').toLowerCase();
+		callsSubsequently = stations.filter((station) => {
+			return station.crsCode.toLowerCase() === search;
+		});
+
+		if (trains.trainServices)
+			trains.trainServices = trains.trainServices.filter((trainService) => {
+				return (
+					trainService.subsequentLocations &&
+					trainService.subsequentLocations.find((loc) => loc.crs && loc.crs.toLowerCase() == search)
+				);
+			});
+	}
+
+	return {
+		trains,
+		from,
+		offset,
+		trimmedPast,
+		trimmedFuture,
+		stations,
+		callsPreviously,
+		callsSubsequently
+	};
 }

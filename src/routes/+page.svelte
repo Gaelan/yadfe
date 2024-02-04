@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import type { FormEventHandler } from 'svelte/elements';
 	import type { HuxleyStations } from './+page.js';
+	import { filterStations } from '$lib/utils.js';
 
 	export let data;
 
@@ -13,38 +14,7 @@
 		if (search == '') {
 			results = data.stations;
 		} else {
-			results = data.stations
-				.filter((station) => {
-					return (
-						station.stationName.toLowerCase().includes(search) ||
-						station.crsCode.toLowerCase().includes(search)
-					);
-				})
-				.sort((a, b) => {
-					const aCrs = a.crsCode.toLowerCase();
-					const bCrs = b.crsCode.toLowerCase();
-					const aName = a.stationName.toLowerCase();
-					const bName = b.stationName.toLowerCase();
-					if (aCrs.startsWith(search) && !bCrs.startsWith(search)) {
-						return -1;
-					}
-					if (bCrs.startsWith(search) && !aCrs.startsWith(search)) {
-						return 1;
-					}
-					if (aName.startsWith(search) && !bName.startsWith(search)) {
-						return -1;
-					}
-					if (bName.startsWith(search) && !aName.startsWith(search)) {
-						return 1;
-					}
-					if (aName < bName) {
-						return -1;
-					}
-					if (bName > aName) {
-						return 1;
-					}
-					return 0;
-				});
+			results = filterStations(data.stations, search);
 		}
 	};
 

@@ -50,7 +50,7 @@
 
 	const goToFirst: FormEventHandler<HTMLFormElement> = (e) => {
 		if (results.length > 0) {
-			goto(`/stations/${results[0].crsCode}`);
+			goto(`/departures/${results[0].crsCode}`);
 		}
 		e.preventDefault();
 	};
@@ -65,7 +65,7 @@
 	</form>
 	<div class="results">
 		{#each results as station (station.crsCode)}
-			<a href="/stations/{station.crsCode}">
+			<a href="/departures/{station.crsCode}">
 				<span class="name">{station.stationName}</span>
 				<span class="crs">{station.crsCode}</span>
 			</a>

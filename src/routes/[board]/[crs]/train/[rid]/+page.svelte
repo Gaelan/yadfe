@@ -2,7 +2,13 @@
 	import type { HuxleyAssociation, HuxleyServiceLocation, HuxleyStationService } from '$lib/types';
 	import reasons from '$lib/reasons.json';
 	import { dev } from '$app/environment';
-	import { getActualTime, getScheduledTime } from '$lib/utils.js';
+	import {
+		getActualTime,
+		getActualArrivalTime,
+		getScheduledTime,
+		getScheduledArrivalTime,
+		getBoardTitle
+	} from '$lib/utils.js';
 	import { page } from '$app/stores';
 
 	export let data;
@@ -25,11 +31,15 @@
 	};
 
 	$: trainUrl = (train: { rid: string }) => {
-		return `/stations/${data.trains.crs}/train/${train.rid}?${queryString()}`;
+		return `/${page.params.board}/${data.trains.crs}/train/${train.rid}?${queryString()}`;
 	};
 
 	let lastDeparted: number;
-	$: lastDeparted = data.details.locations.findLastIndex((x) => x.atdSpecified);
+	$: lastDeparted = data.details.locations.findLastIndex(
+		(x) =>
+			x.atdSpecified ||
+			(x == data.details.locations[data.details.locations.length - 1] && x.ataSpecified)
+	);
 
 	$: depLoc = data.details.locations[0].locationName;
 	$: arrMerge = (
@@ -47,8 +57,8 @@
 </svelte:head>
 
 <div class="details">
-	<a class="back" href="/stations/{data.trains.crs}">
-		← Departures from {data.trains.locationName}
+	<a class="back" href="/{$page.params.board}/{data.trains.crs}">
+		← {getBoardTitle($page.params.board, data.trains.locationName)}
 	</a>
 	<h1>{description}</h1>
 
@@ -93,22 +103,32 @@
 		{#each data.details.locations as loc, idx}
 			{#if !loc.isPass && !loc.isOperational}
 				<a
-					href={loc.staSpecified ? `/stations/${loc.crs}?from=${data.details.rid}` : null}
+					href={loc.staSpecified ? `/departures/${loc.crs}?from=${data.details.rid}` : null}
 					class="stop"
 					class:departed={idx <= lastDeparted}
 				>
 					<div class="stop-main">
 						<div class="name">{loc.locationName}</div>
 						<div class="times">
-							<span class="scheduled">{getScheduledTime(loc)}</span>
+							<span class="scheduled">
+								{#if ['stations', 'departures'].includes($page.params.board)}
+									{getScheduledTime(loc)}
+								{:else}
+									{getScheduledArrivalTime(loc)}
+								{/if}
+							</span>
 							{#if loc.isCancelled}
 								<span class="actual">Cancelled</span>
 							{/if}
 							{#if loc.departureTypeSpecified && loc.departureType == 3}
 								<span class="actual">Delayed</span>
 							{/if}
-							{#if getScheduledTime(loc) != getActualTime(loc)}
-								<span class="actual">{getActualTime(loc)}</span>
+							{#if ['stations', 'departures'].includes($page.params.board)}
+								{#if getScheduledTime(loc) != getActualTime(loc)}
+									<span class="actual">{getActualTime(loc)}</span>
+								{/if}
+							{:else if getScheduledArrivalTime(loc) != getActualArrivalTime(loc)}
+								<span class="actual">{getActualArrivalTime(loc)}</span>
 							{/if}
 							<span class="stop-detail">
 								{#if loc.associations}

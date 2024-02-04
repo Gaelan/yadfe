@@ -41,7 +41,7 @@
 	};
 
 	$: trainUrl = (train: HuxleyStationService) => {
-		return `/stations/${data.trains.crs}/train/${train.rid}?${queryString()}`;
+		return `/${$page.params.board}/${data.trains.crs}/train/${train.rid}?${queryString()}`;
 	};
 
 	$: showAsDeparted = (train: HuxleyStationService) => {
@@ -107,10 +107,14 @@
 </script>
 
 <div class="root">
-	<div class="board" class:board-only={$page.route.id == '/stations/[crs]'}>
+	<div class="board" class:board-only={$page.route.id == '/[board]/[crs]'}>
 		<div class="board-main">
 			<a class="back" href="/">← Change station</a>
 			<h1>{data.trains.locationName}</h1>
+			<div>
+				<a href="/departures/{$page.params.crs}/{$page.url.search}">Departures</a> |
+				<a href="/arrivals/{$page.params.crs}/{$page.url.search}">Arrivals</a>
+			</div>
 
 			{#if data.trains.stationManagerCode == 'SJ'}
 				<div class="message info">
@@ -226,12 +230,19 @@
 								{/if}
 							</div>
 							<div class="main">
-								{#each train.destination as d}
-									<div class="dest">
-										{d.locationName}
-										<span class="via">{d.via || ''}</span>
-									</div>
-								{/each}
+								{#if ['stations', 'departures'].includes($page.params.board)}
+									{#each train.destination as d}
+										<div class="dest">
+											{d.locationName}
+											<span class="via">{d.via || ''}</span>
+										</div>
+									{/each}
+								{:else}
+									{#each train.origin as o}
+										{o.locationName}
+										<span class="via">{o.via || ''}</span>
+									{/each}
+								{/if}
 								<div class="details">
 									{train.trainid} • {train.operator}
 									{#if train.length}

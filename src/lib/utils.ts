@@ -1,5 +1,5 @@
 import { Temporal } from '@js-temporal/polyfill';
-import type { HuxleyTimes } from './types';
+import type { HuxleyStations, HuxleyTimes } from './types';
 
 export function getScheduledTime(train: HuxleyTimes) {
 	let time;
@@ -64,4 +64,39 @@ export function getActualArrivalTime(train: HuxleyTimes) {
 
 export function parseTime(time: string) {
 	return Temporal.ZonedDateTime.from(time + '[Europe/London]');
+}
+
+export function filterStations(stations: HuxleyStations, search: string) {
+	return stations
+		.filter((station) => {
+			return (
+				station.stationName.toLowerCase().includes(search) ||
+				station.crsCode.toLowerCase().includes(search)
+			);
+		})
+		.sort((a, b) => {
+			const aCrs = a.crsCode.toLowerCase();
+			const bCrs = b.crsCode.toLowerCase();
+			const aName = a.stationName.toLowerCase();
+			const bName = b.stationName.toLowerCase();
+			if (aCrs.startsWith(search) && !bCrs.startsWith(search)) {
+				return -1;
+			}
+			if (bCrs.startsWith(search) && !aCrs.startsWith(search)) {
+				return 1;
+			}
+			if (aName.startsWith(search) && !bName.startsWith(search)) {
+				return -1;
+			}
+			if (bName.startsWith(search) && !aName.startsWith(search)) {
+				return 1;
+			}
+			if (aName < bName) {
+				return -1;
+			}
+			if (bName > aName) {
+				return 1;
+			}
+			return 0;
+		});
 }

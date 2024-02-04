@@ -3,16 +3,50 @@
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { dev } from '$app/environment';
-	import type { HuxleyServiceLocation, HuxleyStationService, HuxleyTimes } from '$lib/types.js';
+	import type {
+		HuxleyServiceLocation,
+		HuxleyStationService,
+		HuxleyTimes,
+		HuxleyStations
+	} from '$lib/types.js';
 	import {
 		getActualArrivalTime,
 		getActualTime,
 		getScheduledArrivalTime,
 		getScheduledTime,
-		parseTime
+		parseTime,
+		filterStations
 	} from '$lib/utils.js';
 
 	export let data;
+	let previousResults = [];
+	let subsequentResults = [];
+
+	const handleInput: FormEventHandler<HTMLInputElement> = async (e, results) => {
+		const search = e.currentTarget.value.toLowerCase();
+		if (search === '') {
+			const query = new URLSearchParams($page.url.search);
+			const clearFilter = [{ stationName: 'Clear Filter', crsCode: '' }];
+			if (results === 'previousResults') {
+				previousResults =
+					query.has('callsPreviously') && query.get('callsPreviously') !== '' ? clearFilter : [];
+			} else {
+				subsequentResults =
+					query.has('callsSubsequently') && query.get('callsSubsequently') !== ''
+						? clearFilter
+						: [];
+			}
+		} else {
+			const stations = filterStations(data.stations, search);
+			if (results === 'previousResults') previousResults = stations;
+			else subsequentResults = stations;
+		}
+	};
+
+	const clearResults: FormEventHandler<HTMLInputElement> = async (e, results) => {
+		if (results === 'previousResults') previousResults = [];
+		else subsequentResults = [];
+	};
 
 	$: if (dev) {
 		console.log(data.trains);
@@ -62,7 +96,6 @@
 	$: hideTrain = (train: HuxleyStationService) => {
 		if (!fromStop) return false;
 		if ($page.url.searchParams.has('timeOffset')) return false;
-
 		const arrival = parseTime(fromStop.sta);
 		const departure = parseTime(train.std);
 
@@ -168,12 +201,72 @@
 				{/each}
 			{/if}
 
+			<button
+				type="button"
+				onclick="let d = document.getElementById('filters'); d.style.display = (d.style.display === 'none' ? 'block' : 'none')"
+				>Filters</button
+			>
+			<div id="filters" style="display: none">
+				<div id="calls_previously">
+					<div class="station-search" class:has-results={previousResults.length > 0}>
+						<input
+							on:input={(event) => handleInput(event, 'previousResults')}
+							value={data.callsPreviously && data.callsPreviously.length > 0
+								? data.callsPreviously[0].stationName
+								: ''}
+							placeholder="Calls Previously"
+							autocorrect="off"
+						/>
+						<div id="previous_results" class="results">
+							{#each previousResults as station (station.crsCode)}
+								<a
+									href="?{queryString({
+										callsPreviously: station.crsCode
+									})}"
+									on:click={(event) => clearResults(event, 'previousResults')}
+								>
+									<span class="name">{station.stationName}</span>
+									<span class="crs">{station.crsCode}</span>
+								</a>
+							{/each}
+						</div>
+					</div>
+				</div>
+				<div id="calls_subsequently">
+					<div class="station-search" class:has-results={subsequentResults.length > 0}>
+						<input
+							on:input={(event) => handleInput(event, 'subsequentResults')}
+							value={data.callsSubsequently && data.callsSubsequently.length > 0
+								? data.callsSubsequently[0].stationName
+								: ''}
+							placeholder="Calls Subsequently"
+							autocorrect="off"
+						/>
+						<div id="subsequent_results" class="results">
+							{#each subsequentResults as station (station.crsCode)}
+								<a
+									href="?{queryString({
+										callsSubsequently: station.crsCode
+									})}"
+									on:click={(event) => clearResults(event, 'subsequentResults')}
+								>
+									<span class="name">{station.stationName}</span>
+									<span class="crs">{station.crsCode}</span>
+								</a>
+							{/each}
+						</div>
+					</div>
+				</div>
+			</div>
+
 			{#if data.offset > -120}
-				<a
-					href="?{queryString({
-						timeOffset: Math.max(data.offset - adjustmentOffset, -120).toString()
-					})}">Earlier trains</a
-				>
+				<div>
+					<a
+						href="?{queryString({
+							timeOffset: Math.max(data.offset - adjustmentOffset, -120).toString()
+						})}">Earlier trains</a
+					>
+				</div>
 			{/if}
 			{#if fromStop}
 				<div class="train">
@@ -427,5 +520,52 @@
 		.root > :global(*) {
 			height: auto;
 		}
+	}
+
+	.station-search {
+		border: 1px solid var(--border);
+		max-width: 30em;
+		margin-top: 5px;
+		margin-bottom: 5px;
+		margin-left: auto;
+		margin-right: auto;
+		border-radius: 5px;
+		display: flex;
+		flex-direction: column;
+		background-color: var(--background);
+	}
+
+	input {
+		font-size: 125%;
+		width: 100%;
+		appearance: none;
+		border: none;
+		border-radius: 5px;
+		padding: 5px;
+		background-color: var(--background);
+		color: var(--text);
+	}
+	.has-results input {
+		border-bottom: 1px solid var(--border);
+		border-radius: 5px 5px 0px 0px;
+	}
+	.results {
+		flex: 1;
+	}
+	.results a {
+		display: flex;
+		font-size: 125%;
+		color: var(--text);
+		text-decoration: none;
+		padding: 5px;
+	}
+	.results a:not(:last-child) {
+		border-bottom: 1px var(--border-light) solid;
+	}
+	.name {
+		flex: 1;
+	}
+	.crs {
+		color: var(--text-light-big);
 	}
 </style>

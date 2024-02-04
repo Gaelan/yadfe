@@ -62,6 +62,20 @@ export type HuxleyStationService = HuxleyTimes & {
 		via: string | null;
 	}[];
 
+	previousLocations:
+		| {
+				locationName: string;
+				crs: string;
+		  }[]
+		| null;
+
+	subsequentLocations:
+		| {
+				locationName: string;
+				crs: string;
+		  }[]
+		| null;
+
 	platform: string;
 	operator: string;
 	activities: string;
@@ -87,3 +101,8 @@ export type HuxleyDepartures = {
 	crs: string;
 	stationManagerCode: string;
 };
+
+export type HuxleyStations = {
+	crsCode: string;
+	stationName: string;
+}[];

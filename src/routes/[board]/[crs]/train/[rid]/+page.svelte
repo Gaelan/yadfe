@@ -2,7 +2,13 @@
 	import type { HuxleyAssociation, HuxleyServiceLocation, HuxleyStationService } from '$lib/types';
 	import reasons from '$lib/reasons.json';
 	import { dev } from '$app/environment';
-	import { getActualTime, getScheduledTime, getBoardTitle } from '$lib/utils.js';
+	import {
+		getActualTime,
+		getActualArrivalTime,
+		getScheduledTime,
+		getScheduledArrivalTime,
+		getBoardTitle
+	} from '$lib/utils.js';
 	import { page } from '$app/stores';
 
 	export let data;
@@ -104,15 +110,25 @@
 					<div class="stop-main">
 						<div class="name">{loc.locationName}</div>
 						<div class="times">
-							<span class="scheduled">{getScheduledTime(loc)}</span>
+							<span class="scheduled">
+								{#if ['stations', 'departures'].includes($page.params.board)}
+									{getScheduledTime(loc)}
+								{:else}
+									{getScheduledArrivalTime(loc)}
+								{/if}
+							</span>
 							{#if loc.isCancelled}
 								<span class="actual">Cancelled</span>
 							{/if}
 							{#if loc.departureTypeSpecified && loc.departureType == 3}
 								<span class="actual">Delayed</span>
 							{/if}
-							{#if getScheduledTime(loc) != getActualTime(loc)}
-								<span class="actual">{getActualTime(loc)}</span>
+							{#if ['stations', 'departures'].includes($page.params.board)}
+								{#if getScheduledTime(loc) != getActualTime(loc)}
+									<span class="actual">{getActualTime(loc)}</span>
+								{/if}
+							{:else if getScheduledArrivalTime(loc) != getActualArrivalTime(loc)}
+								<span class="actual">{getActualArrivalTime(loc)}</span>
 							{/if}
 							<span class="stop-detail">
 								{#if loc.associations}

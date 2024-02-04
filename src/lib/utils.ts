@@ -16,7 +16,12 @@ export function getScheduledTime(train: HuxleyTimes) {
 }
 
 export function getScheduledArrivalTime(train: HuxleyTimes) {
-	const time = train.sta;
+	let time;
+	if (train.staSpecified) {
+		time = train.sta;
+	} else {
+		time = train.std;
+	}
 	return new Date(time).toLocaleTimeString('en-GB', {
 		hourCycle: 'h23',
 		hour: '2-digit',
@@ -52,8 +57,14 @@ export function getActualArrivalTime(train: HuxleyTimes) {
 		time = train.ata;
 	} else if (train.etaSpecified) {
 		time = train.eta;
-	} else {
+	} else if (train.staSpecified) {
 		time = train.sta;
+	} else if (train.atdSpecified) {
+		time = train.atd;
+	} else if (train.etdSpecified) {
+		time = train.etd;
+	} else {
+		time = train.std;
 	}
 	return new Date(time).toLocaleTimeString('en-GB', {
 		hourCycle: 'h23',

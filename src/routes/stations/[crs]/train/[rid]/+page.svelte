@@ -104,7 +104,7 @@
 							{#if loc.isCancelled}
 								<span class="actual">Cancelled</span>
 							{/if}
-							{#if loc.departureTypeSpecified && loc.departureType == 3}
+							{#if loc.stdSpecified ? loc.departureTypeSpecified && loc.departureType == 3 : loc.arrivalTypeSpecified && loc.arrivalType == 3}
 								<span class="actual">Delayed</span>
 							{/if}
 							{#if getScheduledTime(loc) != getActualTime(loc)}
@@ -126,6 +126,9 @@
 								{/if}
 								{#if loc.activities.split(' ').includes('R')}
 									• by request
+								{/if}
+								{#if loc.ataSpecified && !loc.atdSpecified}
+									• arrived
 								{/if}
 							</span>
 						</div>

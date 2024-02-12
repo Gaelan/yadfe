@@ -52,6 +52,8 @@ export type HuxleyServiceLocation = HuxleyTimes & {
 
 	departureType: number;
 	departureTypeSpecified: number;
+	arrivalType: number;
+	arrivalTypeSpecified: number;
 
 	associations: HuxleyAssociation[] | null;
 };

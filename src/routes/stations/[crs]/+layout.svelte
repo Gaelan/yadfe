@@ -55,7 +55,7 @@
 
 			return departure < arrival;
 		} else {
-			return train.ataSpecified || train.atdSpecified;
+			return train.atdSpecified;
 		}
 	};
 

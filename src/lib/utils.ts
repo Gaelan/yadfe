@@ -8,20 +8,11 @@ export function getScheduledTime(train: HuxleyTimes) {
 	} else {
 		time = train.sta;
 	}
-	return new Date(time).toLocaleTimeString('en-GB', {
-		hourCycle: 'h23',
-		hour: '2-digit',
-		minute: '2-digit'
-	});
+	return parseTime(time);
 }
 
 export function getScheduledArrivalTime(train: HuxleyTimes) {
-	const time = train.sta;
-	return new Date(time).toLocaleTimeString('en-GB', {
-		hourCycle: 'h23',
-		hour: '2-digit',
-		minute: '2-digit'
-	});
+	return parseTime(train.sta);
 }
 
 export function getActualTime(train: HuxleyTimes) {
@@ -39,11 +30,7 @@ export function getActualTime(train: HuxleyTimes) {
 	} else {
 		time = train.sta;
 	}
-	return new Date(time).toLocaleTimeString('en-GB', {
-		hourCycle: 'h23',
-		hour: '2-digit',
-		minute: '2-digit'
-	});
+	return parseTime(time);
 }
 
 export function getActualArrivalTime(train: HuxleyTimes) {
@@ -55,11 +42,36 @@ export function getActualArrivalTime(train: HuxleyTimes) {
 	} else {
 		time = train.sta;
 	}
-	return new Date(time).toLocaleTimeString('en-GB', {
+	return parseTime(time);
+}
+
+export function showTime(time: Temporal.ZonedDateTime) {
+	return time.toLocaleString('en-GB', {
 		hourCycle: 'h23',
 		hour: '2-digit',
 		minute: '2-digit'
 	});
+}
+
+export function showArrivalTime(train: HuxleyTimes) {
+	if (!train.staSpecified || !train.stdSpecified) {
+		return false;
+	}
+
+	if (parseTime(train.sta).until(parseTime(train.std)).total('minute') >= 3) {
+		return true;
+	}
+
+	const actualArrival = parseTime(
+		train.ataSpecified ? train.ata : train.etaSpecified ? train.eta : train.sta
+	);
+	const actualDeparture = parseTime(
+		train.atdSpecified ? train.atd : train.etdSpecified ? train.etd : train.std
+	);
+
+	if (actualArrival.until(actualDeparture).total('minute') >= 3) {
+		return true;
+	}
 }
 
 export function parseTime(time: string) {

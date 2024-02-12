@@ -1,17 +1,17 @@
 export type HuxleyTimes = {
 	ata: string;
-	ataSpecified: string;
+	ataSpecified: boolean;
 	eta: string;
-	etaSpecified: string;
+	etaSpecified: boolean;
 	sta: string;
-	staSpecified: string;
+	staSpecified: boolean;
 
 	atd: string;
-	atdSpecified: string;
+	atdSpecified: boolean;
 	etd: string;
-	etdSpecified: string;
+	etdSpecified: boolean;
 	std: string;
-	stdSpecified: string;
+	stdSpecified: boolean;
 };
 
 export type HuxleyServiceDetails = {
@@ -51,9 +51,9 @@ export type HuxleyServiceLocation = HuxleyTimes & {
 	isCancelled: boolean;
 
 	departureType: number;
-	departureTypeSpecified: number;
+	departureTypeSpecified: boolean;
 	arrivalType: number;
-	arrivalTypeSpecified: number;
+	arrivalTypeSpecified: boolean;
 
 	associations: HuxleyAssociation[] | null;
 };

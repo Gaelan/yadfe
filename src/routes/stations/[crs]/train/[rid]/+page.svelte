@@ -2,8 +2,9 @@
 	import type { HuxleyAssociation, HuxleyServiceLocation, HuxleyStationService } from '$lib/types';
 	import reasons from '$lib/reasons.json';
 	import { dev } from '$app/environment';
-	import { getActualTime, getScheduledTime } from '$lib/utils.js';
+	import { getActualArrivalTime, getActualTime, getScheduledArrivalTime, getScheduledTime, showArrivalTime, showTime } from '$lib/utils.js';
 	import { page } from '$app/stores';
+	import Time from '$lib/time.svelte';
 
 	export let data;
 
@@ -39,7 +40,7 @@
 		arrMerge.length > 0
 			? arrMerge.map((x) => x.destination).join(' and ')
 			: data.details.locations[data.details.locations.length - 1].locationName;
-	$: description = `${getScheduledTime(data.details.locations[0])} ${depLoc} to ${arrLoc}`;
+	$: description = `${showTime(getScheduledTime(data.details.locations[0]))} ${depLoc} to ${arrLoc}`;
 </script>
 
 <svelte:head>
@@ -100,15 +101,15 @@
 					<div class="stop-main">
 						<div class="name">{loc.locationName}</div>
 						<div class="times">
-							<span class="scheduled">{getScheduledTime(loc)}</span>
+							{#if showArrivalTime(loc) }
+								<Time scheduled={getScheduledArrivalTime(loc)} actual={getActualArrivalTime(loc)} delayed={loc.arrivalType == 3} /> arr
+								• <Time scheduled={getScheduledTime(loc)} actual={getActualTime(loc)} delayed={loc.departureType == 3} /> dep
+							{:else}
+								<Time scheduled={getScheduledTime(loc)} actual={getActualTime(loc)} delayed={loc.stdSpecified ? loc.departureTypeSpecified && loc.departureType == 3 : loc.arrivalTypeSpecified && loc.arrivalType == 3} />
+							{/if}
+
 							{#if loc.isCancelled}
-								<span class="actual">Cancelled</span>
-							{/if}
-							{#if loc.stdSpecified ? loc.departureTypeSpecified && loc.departureType == 3 : loc.arrivalTypeSpecified && loc.arrivalType == 3}
-								<span class="actual">Delayed</span>
-							{/if}
-							{#if getScheduledTime(loc) != getActualTime(loc)}
-								<span class="actual">{getActualTime(loc)}</span>
+								• <span class="actual">cancelled</span>
 							{/if}
 							<span class="stop-detail">
 								{#if loc.associations}
@@ -126,9 +127,6 @@
 								{/if}
 								{#if loc.activities.split(' ').includes('R')}
 									• by request
-								{/if}
-								{#if loc.ataSpecified && !loc.atdSpecified}
-									• arrived
 								{/if}
 							</span>
 						</div>

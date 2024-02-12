@@ -9,7 +9,10 @@
 		getActualTime,
 		getScheduledArrivalTime,
 		getScheduledTime,
-		parseTime
+		parseTime,
+
+		showTime
+
 	} from '$lib/utils.js';
 
 	export let data;
@@ -178,12 +181,12 @@
 			{#if fromStop}
 				<div class="train">
 					<div class="time">
-						<div class="scheduled">{getScheduledArrivalTime(fromStop)}</div>
+						<div class="scheduled">{showTime(getScheduledArrivalTime(fromStop))}</div>
 						{#if fromStop.isCancelled}
 							<div class="actual">Cancelled</div>
 						{/if}
-						{#if getActualArrivalTime(fromStop) != getScheduledArrivalTime(fromStop)}
-							<div class="actual">{getActualArrivalTime(fromStop)}</div>
+						{#if !getActualArrivalTime(fromStop).equals(getScheduledArrivalTime(fromStop))}
+							<div class="actual">{showTime(getActualArrivalTime(fromStop))}</div>
 						{/if}
 					</div>
 					<div class="main">
@@ -214,15 +217,15 @@
 							class:selected={train.rid == $page.params.rid}
 						>
 							<div class="time">
-								<div class="scheduled">{getScheduledTime(train)}</div>
+								<div class="scheduled">{showTime(getScheduledTime(train))}</div>
 								{#if train.isCancelled}
 									<div class="actual">Cancelled</div>
 								{/if}
 								{#if train.departureTypeSpecified && train.departureType == 3}
 									<div class="actual">Delayed</div>
 								{/if}
-								{#if getActualTime(train) != getScheduledTime(train)}
-									<div class="actual">{getActualTime(train)}</div>
+								{#if !getActualTime(train).equals(getScheduledTime(train))}
+									<div class="actual">{showTime(getActualTime(train))}</div>
 								{/if}
 							</div>
 							<div class="main">

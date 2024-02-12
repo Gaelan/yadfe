@@ -14,6 +14,8 @@
 		--text-light-big: #777;
 		--text-link: blue;
 		--text-red: red;
+		--text-yellow: #777700;
+		--text-green: green;
 
 		--background: #fff;
 		--background-selected: #eee;
@@ -45,6 +47,8 @@
 			--text-light-big: #777;
 			--text-link: #00bbff;
 			--text-red: red;
+			--text-yellow: yellow;
+			--text-green: green;
 
 			--background: #222;
 			--background-selected: #111;

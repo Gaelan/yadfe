@@ -14,6 +14,7 @@
 		showTime
 
 	} from '$lib/utils.js';
+	import Time from '$lib/time.svelte';
 
 	export let data;
 
@@ -183,10 +184,9 @@
 					<div class="time">
 						<div class="scheduled">{showTime(getScheduledArrivalTime(fromStop))}</div>
 						{#if fromStop.isCancelled}
-							<div class="actual">Cancelled</div>
-						{/if}
-						{#if !getActualArrivalTime(fromStop).equals(getScheduledArrivalTime(fromStop))}
-							<div class="actual">{showTime(getActualArrivalTime(fromStop))}</div>
+							<div class="actual">cancelled</div>
+						{:else}
+							<Time scheduled={getScheduledArrivalTime(fromStop)} actual={getActualArrivalTime(fromStop)} delayed={fromStop.arrivalType == 3} actualOnly={true}/>
 						{/if}
 					</div>
 					<div class="main">
@@ -219,13 +219,9 @@
 							<div class="time">
 								<div class="scheduled">{showTime(getScheduledTime(train))}</div>
 								{#if train.isCancelled}
-									<div class="actual">Cancelled</div>
-								{/if}
-								{#if train.departureTypeSpecified && train.departureType == 3}
-									<div class="actual">Delayed</div>
-								{/if}
-								{#if !getActualTime(train).equals(getScheduledTime(train))}
-									<div class="actual">{showTime(getActualTime(train))}</div>
+									<div class="actual">cancelled</div>
+								{:else}
+									<Time scheduled={getScheduledTime(train)} actual={getActualTime(train)} delayed={train.departureType == 3} actualOnly={true}/>
 								{/if}
 							</div>
 							<div class="main">

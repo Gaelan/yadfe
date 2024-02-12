@@ -5,11 +5,15 @@
     export let scheduled: Temporal.ZonedDateTime;
     export let actual: Temporal.ZonedDateTime;
     export let delayed: boolean;
+    export let actualOnly: boolean = false;
 
     $: diff = scheduled.until(actual).total("minute");
 </script>
 
-<span class="scheduled">{showTime(scheduled)}</span>
+{#if !actualOnly}
+    <span class="scheduled">{showTime(scheduled)}</span>
+{/if}
+
 {#if delayed}
     <span class="bad">delayed</span>
 {:else if diff >= 5}

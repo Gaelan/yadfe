@@ -7,7 +7,7 @@ export async function load({ fetch, params, url }) {
 	const paramOffset = url.searchParams.get('timeOffset');
 	if (url.searchParams.get('from')) {
 		const fromRid = url.searchParams.get('from');
-		from = await (await fetch(`https://huxley2.azurewebsites.net/service/${fromRid}`)).json();
+		from = await (await fetch(`https://huxley2.fly.dev/service/${fromRid}`)).json();
 
 		if (from) {
 			const fromStop = from.locations.find((loc) => loc.crs == params.crs.toUpperCase());
@@ -35,9 +35,7 @@ export async function load({ fetch, params, url }) {
 	}
 
 	const data: HuxleyDepartures = await (
-		await fetch(
-			`https://huxley2.azurewebsites.net/staffdepartures/${params.crs}/50?timeOffset=${offset}`
-		)
+		await fetch(`https://huxley2.fly.dev/staffdepartures/${params.crs}/50?timeOffset=${offset}`)
 	).json();
 
 	return { trains: data, from, offset, trimmedPast, trimmedFuture };

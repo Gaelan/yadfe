@@ -15,3 +15,6 @@ primary_region = "lhr"
   auto_start_machines = true
   min_machines_running = 0
   processes = ["app"]
+
+[env]
+ADDRESS_HEADER = "Fly-Client-IP"
